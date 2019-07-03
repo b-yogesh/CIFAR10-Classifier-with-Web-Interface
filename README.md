@@ -1,5 +1,10 @@
 # CIFAR10-Classifier-with-Web-Interface
 
+Deep Convolutional Neural Network
+Number of Layers - 5
+Epoch - 30
+Test Accuracy - 84.62
+
 To start the web interface
 Clone this repo
 Train the model from CIFAR10Final.ipynb
@@ -15,7 +20,10 @@ Install Redis
 ```
   
  Start the Flask python file
-  - python Real-Time-Classification.py
+ ``` python Real-Time-Classification.py
+ ```
 
  Webpage rendered on localhost:5000
+ 
+ **Screenshots included
 
