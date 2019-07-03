@@ -10,7 +10,10 @@ Install Redis
 
  Start the Redis server
  Start the celery worker 
-  - celery worker -A Real-Time-Classification.celery
+ '''
+   celery worker -A Real-Time-Classification.celery.
+ '''
+  
  Start the Flask python file
   - python Real-Time-Classification.py
 
