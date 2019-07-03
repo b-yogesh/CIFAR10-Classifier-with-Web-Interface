@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  	<meta charset="UTF-8">
+		<title>CIFAR 10 Classifier</title>
+		<link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'style.css') }}">
+
+	</head>
+
+	<body>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'jquery.easypiechart.js') }}"></script>
+
+
+    <div class = "container">
+      <div class = "box">
+        <div id="chart0" class="chart chart0" data-percent="0"><span>0%</span></div>
+        <h2> Airplane  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart1" data-percent="0"><span>0%</span></div>
+          <h2> Automobile </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart2" data-percent="0"><span>0%</span></div>
+        <h2>Bird  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart3" data-percent="0"><span>0%</span></div>
+        <h2>Cat  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart4" data-percent="0"><span>0%</span></div>
+        <h2>Deer  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart5" data-percent="0"><span>0%</span></div>
+          <h2>Dog  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart6" data-percent="0"><span>0%</span></div>
+          <h2>Frog  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart7" data-percent="0"><span>0%</span></div>
+          <h2>Horse  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart8" data-percent="0"><span>0%</span></div>
+          <h2>Ship  </h2>
+      </div>
+      <div class = "box">
+        <div class="chart chart9" data-percent="0"><span>0%</span></div>
+          <h2>Truck  </h2>
+      </div>
+
+    </div>
+
+    <script>
+
+    $(function() {
+        $('.chart').easyPieChart({
+
+              barColor: '#f0750c',
+              scaleColor: false,
+              lineWidth: 9,
+              trackColor: '#999491',
+              lineCap: "square"
+
+        });
+
+    });
+
+
+    $(document).ready(function() {
+      $('.reset').on("click", function(e) {
+        console.log("entered reset");
+          e.preventDefault();
+          var newValue = "0%";
+
+            $('span', $('.chart0, .chart1, .chart2, .chart3, .chart4, .chart5, .chart6, .chart7, .chart8, .chart9')).text(newValue);
+            $('.chart0').data('easyPieChart').update(newValue);
+            $('.chart1').data('easyPieChart').update(newValue);
+            $('.chart2').data('easyPieChart').update(newValue);
+            $('.chart3').data('easyPieChart').update(newValue);
+            $('.chart4').data('easyPieChart').update(newValue);
+            $('.chart5').data('easyPieChart').update(newValue);
+            $('.chart6').data('easyPieChart').update(newValue);
+            $('.chart7').data('easyPieChart').update(newValue);
+            $('.chart8').data('easyPieChart').update(newValue);
+            $('.chart9').data('easyPieChart').update(newValue);
+
+
+             var x = document.getElementById("tbc");
+             var y = document.getElementById("classifiedResult");
+             var z = document.getElementById("classified");
+              // var z = document.getElementsByClassName("chart");
+             if (x.style.display != "none") {
+                 x.style.display = "none";
+                 y.style.display = "none";
+                 z.style.display = "none";
+                  // for(i=0; i< z.length; i++){
+                  //   z[i].innerText = "0%";
+                  // }
+             }
+
+      });
+
+      $('.select').on("click", function(e) {
+        console.log("entered select");
+          e.preventDefault();
+
+          var x = document.getElementById("tbc");
+          if (x.style.display != "block") {
+              x.style.display = "block";}
+
+      });
+
+      $('.classify').on("click", function(e) {
+        console.log("entered classify");
+          e.preventDefault();
+
+
+
+      });
+
+
+});
+  </script>
+
+		<script>
+
+
+			var error = false;
+        function start_long_task() {
+
+        	// Create new div element
+
+
+            // send ajax request to check the result
+
+            $.ajax({
+                type: 'POST',
+                url: '/calculating',
+                success: function(data, status, request) {
+
+                    status_url = request.getResponseHeader('Result');
+                    console.log(status_url);
+                    count = 0
+                     // Stop reloading the page once result is not equal to -1 i.e. classification is successful and
+                     // make it equal to -2 (random choice) which stops reloading the page (in update_page function)
+                    update_page(status_url);
+                },
+                error: function() {
+                	error = true;
+
+                	console.log(error);
+                    alert('Unexpected error. Make sure all servers are up and running');
+
+                }
+            });
+        }
+        function update_page(status_urlv) {
+
+            // send GET request to status URL
+            $.getJSON(status_url, function(data) {
+
+                // show the corresponding gesture gif in the same page
+                result = parseInt(data['result']);
+                console.log(result);
+                air_prob = parseFloat(data['airplane']);
+                auto_prob = parseFloat(data['automobile']);
+                bird_prob = parseFloat(data['bird']);
+                cat_prob = parseFloat(data['cat']);
+                deer_prob = parseFloat(data['deer']);
+                dog_prob = parseFloat(data['dog']);
+                frog_prob = parseFloat(data['frog']);
+                horse_prob = parseFloat(data['horse']);
+                ship_prob = parseFloat(data['ship']);
+                truck_prob = parseFloat(data['truck']);
+
+
+                 if (data['state'] != 'PROGRESS'  && ( data['state'] == 'COMPLETE' || data['state'] == 'SUCCESS') ) {
+                   		 console.log('Completed');
+                   		res = data['result']
+                      var x = document.getElementById("classifiedResult");
+                      var y = document.getElementById("classified");
+                      if (x.style.display != "block") {
+                          x.style.display = "block";
+                          y.style.display = "block";
+                        }
+                        $(function() {
+                        $('.chart0').data('easyPieChart').update(Math.floor(air_prob*100));
+                        $('span', $('.chart0')).text(Math.floor(air_prob*100) + '%');
+                        $('.chart1').data('easyPieChart').update(Math.floor(auto_prob*100));
+                        $('span', $('.chart1')).text(Math.floor(auto_prob*100) + '%');
+                        $('.chart2').data('easyPieChart').update(Math.floor(bird_prob*100));
+                        $('span', $('.chart2')).text(Math.floor(bird_prob*100) + '%');
+                        $('.chart3').data('easyPieChart').update(Math.floor(cat_prob*100));
+                        $('span', $('.chart3')).text(Math.floor(cat_prob*100) + '%');
+                        $('.chart4').data('easyPieChart').update(Math.floor(deer_prob*100));
+                        $('span', $('.chart4')).text(Math.floor(deer_prob*100) + '%');
+                        $('.chart5').data('easyPieChart').update(Math.floor(dog_prob*100));
+                        $('span', $('.chart5')).text(Math.floor(dog_prob*100) + '%');
+                        $('.chart6').data('easyPieChart').update(Math.floor(frog_prob*100));
+                        $('span', $('.chart6')).text(Math.floor(frog_prob*100) + '%');
+                        $('.chart7').data('easyPieChart').update(Math.floor(horse_prob*100));
+                        $('span', $('.chart7')).text(Math.floor(horse_prob*100) + '%');
+                        $('.chart8').data('easyPieChart').update(Math.floor(ship_prob*100));
+                        $('span', $('.chart8')).text(Math.floor(ship_prob*100) + '%');
+                        $('.chart9').data('easyPieChart').update(Math.floor(truck_prob*100));
+                        $('span', $('.chart9')).text(Math.floor(truck_prob*100) + '%');
+                        });
+
+
+                        var modal = document.getElementById('myModal');
+                        var modalImg = document.getElementById("img01");
+                        modal.style.display = "block";
+                        console.log(modal)
+                   		if(result == 0){
+                        $(function() {
+
+                        y.innerHTML = 'Airplane';
+                        var src = "https://aviationcv-aviationcvcom.netdna-ssl.com/upload/blog/wp-content/uploads/2017/01/1140x500/Boeings-New-Planes-are-Fuel-Savers.png";
+                        modalImg.src = src;
+                        });
+
+                   		} else if(result == 1){
+                        $(function() {
+
+                        y.innerHTML = 'Automobile';
+                          var src = "https://car-images.bauersecure.com/pagefiles/68829/afordmustang.jpg"
+                          modalImg.src = src;
+                        });
+                   		} else if(result == 2){
+                        $(function() {
+
+                        y.innerHTML = 'Bird';
+                        var src = "http://www.imperial.ac.uk/ImageCropToolT4/imageTool/uploaded-images/newseventsimage_1529346275459_mainnews2012_x1.jpg";
+                        modalImg.src = src;
+                        });
+                   		}
+                      else if(result == 3){
+                       $(function() {
+
+                       y.innerHTML = 'Cat';
+                       var src = "https://www.dejohnpetservices.com/wp-content/uploads/cats-animals-kittens-background.jpg";
+                       modalImg.src = src;
+                       });
+                     } else if(result == 4){
+                       $(function() {
+
+                       y.innerHTML = 'Deer';
+                       var src = "https://www.telegraph.co.uk/content/dam/gardening/2018/03/13/fawn-2634791_960_720_trans_NvBQzQNjv4BqZgEkZX3M936N5BQK4Va8RWtT0gK_6EfZT336f62EI5U.jpg?imwidth=450";
+                       modalImg.src = src;
+                       });
+                     }
+                     else if(result == 5){
+                      $(function() {
+
+                      y.innerHTML = 'Dog';
+                      var src = "http://parkipourlavie.com/wp-content/uploads/2014/03/grinning_happy_dog.jpg";
+                      modalImg.src = src;
+                      });
+                    } else if(result == 6){
+                      $(function() {
+
+                      y.innerHTML = 'Frog';
+                      var src = "https://media.wired.com/photos/59273133cefba457b079c5cc/16:9/w_1920,c_limit/353-Ranitomeya-imitator_juvenile_John-P.-Clare.jpg";
+                      modalImg.src = src;
+                      });
+                    }
+                    else if(result == 7){
+                     $(function() {
+
+                     y.innerHTML = 'Horse';
+                     var src = "https://media.deseretdigital.com/file/2125000784?resize=width_1200&type=jpg&c=6&a=e0717f4c";
+                     modalImg.src = src;
+                     });
+                   } else if(result == 8){
+                     $(function() {
+
+                     y.innerHTML = 'Ship';
+                     var src = "https://rp-online.de/imgs/32/2/4/6/3/8/4/6/7/tok_f48430f7b4496577d880300913c09b82/w940_h528_x470_y264_2b0d77d008493de4.jpg";
+                     modalImg.src = src;
+                     });
+                   }
+                   else if(result == 9){
+                     $(function() {
+
+                     y.innerHTML = 'Truck';
+                     var src = "http://www.dafbbi.com/~/media/images/daf%20trucks/online%20truck%20configurator/background/backgroundvisual.jpg?h=1184&w=1875&la=de-DE";
+                     modalImg.src = src;
+                     });
+                   }
+                   		else if(res == -1){
+                   			alert('Error occured.')
+                   		}
+                      result = -2;
+
+                }
+
+                else if (data['state'] != 'FAILURE' &&  data['state'] == 'PROGRESS') {
+
+                    // show calculating gif in the same page
+
+                 	console.log('In Progress');
+
+                }
+                else if (data['state'] == 'FAILURE'){
+                	console.log('Failure');
+                	document.body.style.background =  "black";
+                	$("#upd_img").attr("src","https://cdn157.picsart.com/222878963013201.gif?r1024x1024");
+                	console.log('Failure2');
+                	result = -2;
+                }
+               if(result != -2){
+
+               	// rerun in every 100 milliseconds
+               	//console.log(count)
+               	if(count > 130)
+               	{
+               		alert('Device Error. The page will be refreshed. Please reset the Bluetooth connection to the Metawear device');
+               		location.reload(true);
+               	}
+               	count = count + 1
+                setTimeout(function() {
+                        update_page(status_url);
+                    }, 100);
+            }
+
+            });
+        }
+        $(function() {
+            $('#calculating').click(start_long_task);
+        });
+
+
+
+
+
+    	</script>
+      <h1 style="color:#fff; size:50px; text-align: center;">CIFAR 10 Classifier </h1>
+      <h3 style="color:#fff; size:20px; ">Select a category to classify an image from:</h3>
+
+      <form action="/getTarget" method="POST">
+        <select name="selectedItem" class="select-css">
+            <option value="0">Airplane</option>
+            <option value="1">Automobile</option>
+            <option value="2">Bird</option>
+            <option value="3">Cat</option>
+            <option value="4">Deer</option>
+            <option value="5">Dog</option>
+            <option value="6">Frog</option>
+            <option value="7">Horse</option>
+            <option value="8">Ship</option>
+            <option value="9">Truck</option>
+        </select>
+      <input type="submit" name="select_button" class= 'button'  value="Choose random image"> .</input>
+    </form>
+
+
+      <div id="tbc" style="position:absolute; top:35%; left:5%; ">
+        <img id="toBeClassified" src="{{ url_for('static', filename = filename) }}" alt="where are u" width="200" height="200" style="text-align: center;"/></br>
+        <input type="button"  class= 'button'  id = "calculating" style="position:absolute; left:15%" class = "classify" value="Classify"></button>
+      </div>
+
+
+      <div>
+          <input type="button"  class= 'reset button'  id = "reset" style="position:absolute; top:75%; left:45%"  value="Reset"></input>
+      </div>
+
+
+      <div>
+        <label  id="classifiedResult" style="color: #fff; font-size: 20px; position:absolute; top:45%; left:80%; display:none">The Classified image is : </label>
+        <label id="classified" style="color: #fff; font-size: 30px; position:absolute; top:50%; left:83%; display:none;"></label>
+      </div>
+
+      <img id="myImg" style = 'display: none' src="https://www.w3schools.com/w3css/img_lights.jpg" alt="Trolltunga, Norway" width="300" height="200">
+
+      <div id="myModal" class="modal">
+      <span onclick="document.getElementById('myModal').style.display='none'" class="close">×</span>
+      <img class="modal-content" id="img01">
+      <div id="caption"></div>
+    </div>
+
+
+
+	</body>
+</html>
